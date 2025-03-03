@@ -19,7 +19,6 @@ void main() async {
   await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -28,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: '/',  // Set the default route
+      initialRoute: '/home',  // Set the default route
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen()
