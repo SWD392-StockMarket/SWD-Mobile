@@ -1,9 +1,12 @@
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:source_code_mobile/screens/watchlist_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
+import 'package:source_code_mobile/controllers/search_controller.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -17,8 +20,16 @@ void main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => SearchControllerApp()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -27,9 +38,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: '/home',  // Set the default route
+      initialRoute: '/',  // Set the default route
       routes: {
-        '/': (context) => const LoginScreen(),
+        '/': (context) => const WatchlistScreen(),
         '/home': (context) => const HomeScreen()
       },
     );
