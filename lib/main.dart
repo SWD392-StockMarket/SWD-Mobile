@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Named Routes',
       initialRoute: '/',  // Set the default route
       routes: {
-        '/': (context) => const WatchlistScreen(),
+        '/': (context) => const HomeScreen(),
         '/home': (context) => const HomeScreen()
       },
     );

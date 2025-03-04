@@ -19,6 +19,8 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import '../widgets/gradient_container.dart';
+import '../widgets/gradient_app_bar.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -37,17 +39,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text('FUStock', style: TextStyle(color: Colors.white, fontSize: 24)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle, color: Colors.white, size: 30),
-            onPressed: () {},
-          ),
-        ],
+    return GradientContainer(scaffold:
+        Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: const GradientAppBar(
+        title: 'FUStock',
+        icon: Icons.account_circle,
       ),
       body: Column(
         children: [
@@ -99,7 +96,7 @@ class HomeScreen extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: ''),
         ],
       ),
-    );
+    ));
   }
 
   Widget filterButton(String text) {
