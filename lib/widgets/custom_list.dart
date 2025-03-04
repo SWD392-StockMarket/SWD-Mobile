@@ -8,10 +8,13 @@ class CustomEntityList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (entities.isEmpty) {
-      return const Center(
-        child: Text(
-          "Your list is empty, Please create one.",
-          style: TextStyle(fontSize: 16, color: Colors.white),
+      return const SizedBox.expand(
+        child: Center(
+          child: Text(
+            "Your list is empty, Please create one.",
+            style: TextStyle(fontSize: 30, color: Colors.white),
+            textAlign: TextAlign.center, // Ensures text is centered properly
+          ),
         ),
       );
     }
