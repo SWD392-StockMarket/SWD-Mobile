@@ -7,7 +7,6 @@ class SearchControllerApp with ChangeNotifier {
     print("Search: $value");
     notifyListeners();
   }
-
   @override
   void dispose() {
     controller.dispose();
