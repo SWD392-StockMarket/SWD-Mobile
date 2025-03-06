@@ -9,31 +9,32 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.title,
     this.icon,
-    this.onIconPressed
+    this.onIconPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(
-          title,
-          style: const TextStyle(color: Colors.white, fontSize: 30
-          )),
-      backgroundColor: Colors.transparent, // Important
-      elevation: 0, // Removes shadow
+        title,
+        style: const TextStyle(color: Colors.white, fontSize: 30),
+      ),
+      centerTitle: icon == null, // Center title if there's no icon
+      backgroundColor: Colors.transparent,
+      elevation: 0,
       actions: icon != null
           ? [
-            Padding(
-                padding: const EdgeInsets.only(right: 10),
-              child: Center(
-                child: IconButton(
-                    onPressed: onIconPressed ?? () {},
-                    icon: Icon(icon, color: Colors.white, size: 30)
-                ),
-              ),
-            )
-        ]
-      : null,
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Center(
+            child: IconButton(
+              onPressed: onIconPressed ?? () {},
+              icon: Icon(icon, color: Colors.white, size: 30),
+            ),
+          ),
+        )
+      ]
+          : null,
     );
   }
 

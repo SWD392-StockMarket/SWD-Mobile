@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:source_code_mobile/screens/watchlist_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'package:source_code_mobile/screens/stock_monitor_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'package:source_code_mobile/controllers/search_controller.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Named Routes',
       initialRoute: '/',  // Set the default route
       routes: {
-        '/': (context) => const HomeScreen(),
+        '/': (context) => const WatchlistScreen(),
         '/home': (context) => const HomeScreen()
       },
     );

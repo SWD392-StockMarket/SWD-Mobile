@@ -84,7 +84,7 @@ class _WatchlistScreenState extends State<WatchlistScreen>{
           FooterButton(icon: Icons.favorite, label: "Favorites", onTap: () {}),
           FooterButton(icon: Icons.person, label: "Profile", onTap: () {}),
           FooterButton(icon: Icons.settings, label: "Settings", onTap: () {}),
-          FooterButton(icon: Icons.logout, label: "Logout", onTap: () {}),
+          FooterButton(icon: Icons.logout, label: "Logout", onTap: () {Navigator.pushNamed(context, '/home');}),
         ]
         ),
       ),
