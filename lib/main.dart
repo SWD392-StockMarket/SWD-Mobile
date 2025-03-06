@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:source_code_mobile/screens/news_screen.dart';
 import 'package:source_code_mobile/screens/watchlist_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -38,10 +39,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: '/',  // Set the default route
+      initialRoute: '/news',  // Set the default route
       routes: {
-        '/': (context) => const HomeScreen(),
-        '/home': (context) => const HomeScreen()
+        '/': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/news': (context) => const NewsScreen(),
       },
     );
   }
