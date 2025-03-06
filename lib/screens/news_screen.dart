@@ -22,12 +22,13 @@ class _NewsScreenState extends State<NewsScreen> {
   }
 
   Future<void> fetchNews() async {
-    const url = 'https://newsapi.org/v2/everything?q=stock&apiKey=3a0af4775eee43a29d95d356fee24d96&pageSize=10';
+    const url = 'https://newsapi.org/v2/everything?q=stock&apiKey=3a0af4775eee43a29d95d356fee24d96&pageSize=100';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
         setState(() {
-          news = jsonDecode(response.body);
+          news = data['articles']; // ✅ Extract the articles array
         });
       } else {
         throw Exception('Failed to load news');
@@ -38,11 +39,14 @@ class _NewsScreenState extends State<NewsScreen> {
   }
 
   //CHUYỂN HƯỚNG USER TỚI TRANG WEB
-  Future<void> _launchUrl(Uri _url) async {
-    if (!await launchUrl(_url)) {
-      throw Exception('Could not launch $_url');
+  Future<void> _launchUrl(Uri url) async {
+    if (url.toString().isNotEmpty && await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      print("Could not launch URL: $url");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +98,7 @@ class _NewsScreenState extends State<NewsScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
-                        news[index]['urlToImage'], // Placeholder image
+                        news[index]['urlToImage'] ?? 'https://picsum.photos/300/300', // ✅ Fallback image
                         height: 60,
                         width: 60,
                         fit: BoxFit.cover,
@@ -105,7 +109,7 @@ class _NewsScreenState extends State<NewsScreen> {
                     Expanded(
                       child: ListTile(
                         title: Text(
-                          news[index]['title'],
+                          news[index]['title'] ?? 'No Title Available',  // ✅ Handle null title
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -115,7 +119,7 @@ class _NewsScreenState extends State<NewsScreen> {
                           ),
                         ),
                         subtitle: Text(
-                          news[index]['description'],
+                          news[index]['description'] ?? 'No Description Available',  // ✅ Handle null description
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -123,7 +127,14 @@ class _NewsScreenState extends State<NewsScreen> {
                             color: Colors.grey.shade400,
                           ),
                         ),
-                        onTap: () async { await _launchUrl(Uri.parse('${news[index]['url']}')); },
+                        onTap: () async {
+                          final String? url = news[index]['url'];
+                          if (url != null && url.isNotEmpty) {
+                            await _launchUrl(Uri.parse(url));
+                          } else {
+                            print("No URL available for this news article.");
+                          }
+                        },
                       ),
                     ),
                   ],
