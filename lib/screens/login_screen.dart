@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../services/authservice.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,6 +12,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final AuthService _authService = AuthService();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -29,17 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     print("🔹 Full API URL: $fullUrl");
 
     try {
-      final response = await http.post(
-        Uri.parse(fullUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': _usernameController.text,
-          'password': _passwordController.text,
-        }),
-      );
-
-      print("🔹 Response Status Code: ${response.statusCode}");
-      print("🔹 Response Body: ${response.body}");
+      final success = await _authService.login(_usernameController.text, _passwordController.text);
 
       if (!mounted) return;
 
@@ -47,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
 
-      if (response.statusCode == 200) {
+      if (success) {
         Navigator.pushNamed(context, '/home');
       } else {
         setState(() {

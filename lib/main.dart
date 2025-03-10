@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:source_code_mobile/screens/news_screen.dart';
 import 'package:source_code_mobile/screens/stock_monitor_screen.dart';
 import 'package:source_code_mobile/screens/watchlist_screen.dart';
@@ -21,26 +22,29 @@ class MyHttpOverrides extends HttpOverrides {
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('jwt_token');
   await dotenv.load(fileName: ".env");
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => SearchControllerApp()),
       ],
-      child: const MyApp(),
+      child: MyApp(initialRoute: token != null ? '/home' : '/'),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: '/stock',  // Set the default route
+      initialRoute: initialRoute,  // Set the default route
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
