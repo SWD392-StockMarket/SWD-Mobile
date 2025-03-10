@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:source_code_mobile/screens/news_screen.dart';
+import 'package:source_code_mobile/screens/profile_screen.dart';
 import 'package:source_code_mobile/screens/stock_monitor_screen.dart';
 import 'package:source_code_mobile/screens/watchlist_screen.dart';
 import 'screens/home_screen.dart';
@@ -50,6 +51,8 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/news': (context) => const NewsScreen(),
         '/stock' : (context) => const StockMonitorScreen(),
+        '/profile' : (context) => const ProfileScreen(),
+
       },
     );
   }

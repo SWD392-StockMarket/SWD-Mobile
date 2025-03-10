@@ -1,0 +1,2 @@
+C:/Users/Lenovo/Downloads/FPT/SWD/SWD_mobile1/SWD-Mobile/android/app/.cxx/Debug/3e4o566x/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Lenovo/Downloads/FPT/SWD/SWD_mobile1/SWD-Mobile/android/app/.cxx/Debug/3e4o566x/x86_64/CMakeFiles/rebuild_cache.dir
