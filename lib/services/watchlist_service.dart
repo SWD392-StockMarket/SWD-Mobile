@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:source_code_mobile/models/user_response.dart';
 import '../models/stock_reponse.dart';
 
 class WatchListService{
@@ -71,5 +72,60 @@ class WatchListService{
     }
   }
 
+  Future<WatchListResponse?> createWatchList() async {
+    final fullUrl = '$apiUrl/watchlists';
 
+    try{
+      final box = GetStorage();
+
+      final response = await http.post(
+        Uri.parse(fullUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'userId': box.read<String>('user_id'),
+          'label' : "My WacthList",
+          'status': "NEW",
+        }),
+      );
+
+      if(response.statusCode == 200){
+        final json = jsonDecode(response.body);
+        final watchList = WatchListResponse.fromJson(json);
+        return watchList;
+      }else{
+        print('Error: ${response.statusCode}, ${response.body}');
+        return null;
+      }
+    }catch (e) {
+      print('Failed to fetch stocks: $e');
+      return null;
+    }
+  }
+
+  Future<WatchListResponse?> getWatchListByUserId() async{
+    final fullUrl = '$apiUrl/watchlists/user';
+
+    final box = GetStorage();
+
+    final Uri uri = Uri.parse(fullUrl).replace(queryParameters: {
+      'userId' : box.read<String>('user_id')
+    });
+
+    try{
+      final response = await http.get(
+        uri,
+        headers: {'Accept': 'application/json'},
+      );
+      if(response.statusCode == 200){
+        final json = jsonDecode(response.body);
+        return WatchListResponse.fromJson(json);
+      } else{
+        print('Error: ${response.statusCode}, ${response.body}');
+        return null;
+      }
+    }catch (e) {
+      print('Failed to fetch stocks: $e');
+      return null;
+    }
+  }
 }

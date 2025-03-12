@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:source_code_mobile/widgets/gradient_app_bar.dart';
 import '../widgets/gradient_container.dart';
@@ -18,6 +19,7 @@ class WatchlistScreen extends StatefulWidget{
 }
 
 class _WatchlistScreenState extends State<WatchlistScreen>{
+  final WatchListService _watchListService = WatchListService();
 
   @override
   Widget build(BuildContext context){
@@ -30,7 +32,16 @@ class _WatchlistScreenState extends State<WatchlistScreen>{
         appBar: GradientAppBar(
             title: 'Watch List',
             icon: Icons.add_box,
-            onIconPressed: () {
+            onIconPressed: () async {
+              if(!await _watchListService.checkWatchListExist()){
+                final userWatchList = await _watchListService.createWatchList();
+                final box = GetStorage();
+                box.write('watchlist_id', userWatchList?.watchListId);
+              }else{
+                final userWatchList = await _watchListService.getWatchListByUserId();
+                final box = GetStorage();
+                box.write('watchlist_id', userWatchList?.watchListId);
+              }
               Navigator.pushNamed(context, '/stock');
             },
         ),

@@ -37,7 +37,9 @@ class AuthService {
   Future<void> _saveToken(LoginResponse token) async {
     final box = GetStorage();
     box.write('jwt_token', token.token);
-    box.write('user_id', token.userId);
+    box.write('user_id', token.userId.toString());
+    final i = box.read<String>('user_id');
+    print('$i');
   }
 
   // Get stored token
