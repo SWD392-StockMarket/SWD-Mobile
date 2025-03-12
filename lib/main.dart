@@ -25,6 +25,7 @@ class MyHttpOverrides extends HttpOverrides {
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   final box = GetStorage();
   final token = box.read<String>('jwt_token'); // Read token from storage
   await dotenv.load(fileName: ".env");

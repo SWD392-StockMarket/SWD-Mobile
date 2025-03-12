@@ -13,7 +13,7 @@ class LoginResponse {
     final tokenData = json['token']; // Access the nested object
 
     return LoginResponse(
-      userId: tokenData['id'] ?? 0, // Provide default value if null
+      userId: json['userId'] ?? 0, // Provide default value if null
       token: tokenData['result'] ?? "", // Provide default value if null
     );
   }
