@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: initialRoute,  // Set the default route
+      initialRoute: '/news',  // Set the default route
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => AuthGuard(child:  const HomeScreen()),
