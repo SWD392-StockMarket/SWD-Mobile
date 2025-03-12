@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import '../models/user_response.dart';
 
 class AuthService {
-  final String apiUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:5146';
+  final String apiUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:5146/api/v1';
 
   // Login and store token
   Future<bool> login(String email, String password) async {
-    final fullUrl = '$apiUrl/api/auth/login';
+    final fullUrl = '$apiUrl/auth/login';
 
     try {
       final response = await http.post(
@@ -19,10 +20,10 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final token = data['token'];
+        final loginResponse = LoginResponse.fromJson(data);
 
-        if (token != null) {
-          await _saveToken(token);
+        if (loginResponse != null) {
+          await _saveToken(loginResponse);
           return true; // Login successful
         }
       }
@@ -33,20 +34,21 @@ class AuthService {
   }
 
   // Store token in local storage
-  Future<void> _saveToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('jwt_token', token);
+  Future<void> _saveToken(LoginResponse token) async {
+    final box = GetStorage();
+    box.write('jwt_token', token.token);
+    box.write('user_id', token.userId);
   }
 
   // Get stored token
   Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('jwt_token');
+    final box = GetStorage();
+    String? token = box.read<String>('jwt_token');
   }
 
   // Logout: Remove token
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('jwt_token');
+    final box = GetStorage();
+    box.remove('jwt_token');
   }
 }

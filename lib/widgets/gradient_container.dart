@@ -11,10 +11,10 @@ class GradientContainer extends StatelessWidget {
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Color(0x0A0015FA), // 4% opacity
-            Color(0xFFB700FF),
+            Color(0xFF1A1A1A), // Dark gray
+            Color(0xFF3A3A3A), // Slightly lighter gray for reflection effect
           ],
-          stops: [0.0, 1.0], // 0% and 100%
+          stops: [0.2, 1], // Gradual transition
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),

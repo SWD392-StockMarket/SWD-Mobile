@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:source_code_mobile/widgets/gradient_app_bar.dart';
 import '../widgets/gradient_container.dart';
@@ -11,6 +8,7 @@ import '../widgets/expandable_button.dart';
 import '../widgets/custom_list.dart';
 import '../widgets/custom_entity.dart';
 import '../widgets/footer_menu.dart';
+import '../services/watchlist_service.dart';
 
 class WatchlistScreen extends StatefulWidget{
   const WatchlistScreen({super.key});
@@ -29,9 +27,12 @@ class _WatchlistScreenState extends State<WatchlistScreen>{
 
     return GradientContainer(
       scaffold: Scaffold(
-        appBar: const GradientAppBar(
+        appBar: GradientAppBar(
             title: 'Watch List',
             icon: Icons.add_box,
+            onIconPressed: () {
+              Navigator.pushNamed(context, '/stock');
+            },
         ),
         backgroundColor: Colors.transparent,
         body: Column(

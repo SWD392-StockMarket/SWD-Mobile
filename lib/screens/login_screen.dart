@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../services/authservice.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,12 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
       _errorMessage = null;
     });
-
-    final String apiUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:5146';
-    print("🔹 API_URL: $apiUrl");
-
-    final String fullUrl = '$apiUrl/api/auth/login';
-    print("🔹 Full API URL: $fullUrl");
 
     try {
       final success = await _authService.login(_usernameController.text, _passwordController.text);
