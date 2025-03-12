@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
               controller: _passwordController,
@@ -77,6 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 : ElevatedButton(
               onPressed: _login,
               child: const Text('Login'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/register');
+              },
+              child: const Text("No account yet? Register"),
             ),
           ],
         ),

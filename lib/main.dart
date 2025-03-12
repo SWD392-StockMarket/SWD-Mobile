@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:source_code_mobile/screens/news_screen.dart';
 import 'package:source_code_mobile/screens/profile_screen.dart';
+import 'package:source_code_mobile/screens/register_screen.dart';
 import 'package:source_code_mobile/screens/stock_monitor_screen.dart';
 import 'package:source_code_mobile/screens/stock_screen.dart';
 import 'package:source_code_mobile/screens/watchlist_screen.dart';
@@ -23,6 +24,7 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 void main() async {
+  await GetStorage.init();
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
@@ -48,7 +50,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: initialRoute,  // Set the default route
+      initialRoute: '/',  // Set the default route
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => AuthGuard(child:  const HomeScreen()),
@@ -56,6 +58,7 @@ class MyApp extends StatelessWidget {
         '/stock monitor' : (context) => const StockMonitorScreen(),
         '/profile' : (context) => const ProfileScreen(),
         '/watchlist' : (context) => const WatchlistScreen(),
+        '/register' : (context) => const RegisterScreen(),
         '/stock' : (context) => const StockScreen()
       },
     );

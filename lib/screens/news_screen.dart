@@ -41,7 +41,7 @@ class _NewsScreenState extends State<NewsScreen> {
   //CHUYỂN HƯỚNG USER TỚI TRANG WEB
   Future<void> _launchUrl(Uri url) async {
     if (url.toString().isNotEmpty && await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+      await launchUrl(url, mode: LaunchMode.inAppBrowserView);
     } else {
       print("Could not launch URL: $url");
     }

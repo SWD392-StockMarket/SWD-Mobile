@@ -1,0 +1,2 @@
+C:/Users/vtd74/Desktop/GitHub/SWD392/SWD-Mobile/android/app/.cxx/RelWithDebInfo/6p5b241u/x86/CMakeFiles/edit_cache.dir
+C:/Users/vtd74/Desktop/GitHub/SWD392/SWD-Mobile/android/app/.cxx/RelWithDebInfo/6p5b241u/x86/CMakeFiles/rebuild_cache.dir
