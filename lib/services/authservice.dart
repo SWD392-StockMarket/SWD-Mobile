@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:source_code_mobile/models/profile_response.dart';
 import '../models/user_response.dart';
 
 class AuthService {
@@ -53,4 +54,59 @@ class AuthService {
     final box = GetStorage();
     box.remove('jwt_token');
   }
+
+  Future<UserResponse?> getUserProfile() async {
+    final box = GetStorage();
+    final String? userId = box.read<String>('user_id');
+    final String? token = box.read<String>('jwt_token');
+    print(userId);
+
+    // if (userId == null || token == null) return null;
+
+    final fullUrl = '$apiUrl/users/$userId';
+
+    try {
+      final response = await http.get(
+        Uri.parse(fullUrl),
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return UserResponse.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      throw Exception("Failed to fetch user profile: $e");
+    }
+    return null;
+  }
+
+  Future<bool> updateProfile(UserResponse user) async {
+    final box = GetStorage();
+    final String? userId = box.read<String>('user_id');
+    final String? token = box.read<String>('jwt_token');
+
+    if (userId == null || token == null) return false;
+
+    final fullUrl = '$apiUrl/users/$userId';
+
+    try {
+      final response = await http.put(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(user.toJson()),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error updating profile: $e');
+      return false;
+    }
+  }
+
 }

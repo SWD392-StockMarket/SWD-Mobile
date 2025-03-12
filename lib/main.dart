@@ -23,6 +23,7 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 void main() async {
+  await GetStorage.init();
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: '/news',  // Set the default route
+      initialRoute: '/',  // Set the default route
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => AuthGuard(child:  const HomeScreen()),
