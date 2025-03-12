@@ -1,27 +1,27 @@
 class UserResponse {
-  final int id;
-  final String userName;
-  final String email;
-  final String status;
-  final String phoneNumber;
-  final String createdAt;
-  final String lastEdited;
-  final String subscriptionStatus;
+  final int? id;
+  final String? userName;
+  final String? email;
+  final String? status;
+  final String? phoneNumber;
+  final String? createdAt;
+  final String? lastEdited;
+  final String? subscriptionStatus;
 
   UserResponse({
     required this.id,
-    required this.userName,
-    required this.email,
-    required this.status,
-    required this.phoneNumber,
-    required this.createdAt,
-    required this.lastEdited,
-    required this.subscriptionStatus,
+     this.userName,
+     this.email,
+     this.status,
+     this.phoneNumber,
+     this.createdAt,
+     this.lastEdited,
+     this.subscriptionStatus,
   });
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     return UserResponse(
-      id: json['id'],
+      id: json['id'] ?? 1, // Giá trị mặc định nếu id null
       userName: json['userName'],
       email: json['email'],
       status: json['status'],

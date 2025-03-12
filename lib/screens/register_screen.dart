@@ -1,28 +1,35 @@
 import 'package:flutter/material.dart';
 import '../services/authservice.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final AuthService _authService = AuthService();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
 
-  Future<void> _login() async {
+  Future<void> _register() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      final success = await _authService.login(_usernameController.text, _passwordController.text);
+      final success = await _authService.register(
+        _usernameController.text,
+        _emailController.text,
+        _passwordController.text,
+        _phoneNumberController.text,
+      );
 
       if (!mounted) return;
 
@@ -34,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushNamed(context, '/profile');
       } else {
         setState(() {
-          _errorMessage = 'Invalid username or password';
+          _errorMessage = 'Registration failed';
         });
       }
     } catch (e) {
@@ -46,12 +53,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Register')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -59,12 +64,20 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _usernameController,
+              decoration: const InputDecoration(labelText: 'Username'),
+            ),
+            TextField(
+              controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
               controller: _passwordController,
               obscureText: true,
               decoration: const InputDecoration(labelText: 'Password'),
+            ),
+            TextField(
+              controller: _phoneNumberController,
+              decoration: const InputDecoration(labelText: 'Phone number'),
             ),
             const SizedBox(height: 16),
             if (_errorMessage != null)
@@ -76,14 +89,14 @@ class _LoginScreenState extends State<LoginScreen> {
             _isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-              onPressed: _login,
-              child: const Text('Login'),
+              onPressed: _register,
+              child: const Text('Register'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/register');
+                Navigator.pushNamed(context, '/');
               },
-              child: const Text("No account yet? Register"),
+              child: const Text('Already have an account? Log in'),
             ),
           ],
         ),

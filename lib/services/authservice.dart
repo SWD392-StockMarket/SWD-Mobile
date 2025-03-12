@@ -55,6 +55,34 @@ class AuthService {
     box.remove('jwt_token');
   }
 
+  // Thêm phương thức register
+  Future<bool> register(String username, String email, String password, String phoneNumber) async {
+    final fullUrl = '$apiUrl/users/register';
+
+    try {
+      final response = await http.post(
+        Uri.parse(fullUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'userName': username,
+          'email': email,
+          'password': password,
+          'phoneNumber': phoneNumber,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Đăng ký thành công, tự động đăng nhập để lấy token
+        return await login(email, password);
+      } else {
+        // Đăng ký thất bại
+        return false;
+      }
+    } catch (e) {
+      throw Exception("Không thể kết nối tới server: $e");
+    }
+  }
+
   Future<UserResponse?> getUserProfile() async {
     final box = GetStorage();
     final String? userId = box.read<String>('user_id');
@@ -73,6 +101,7 @@ class AuthService {
           'Authorization': 'Bearer $token',
         },
       );
+      print('API Response: ${response.statusCode} - ${response.body}');
 
       if (response.statusCode == 200) {
         return UserResponse.fromJson(jsonDecode(response.body));
@@ -90,7 +119,7 @@ class AuthService {
 
     if (userId == null || token == null) return false;
 
-    final fullUrl = '$apiUrl/users/$userId';
+    final fullUrl = '$apiUrl/users/2';
 
     try {
       final response = await http.put(
