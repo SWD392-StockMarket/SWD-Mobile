@@ -23,7 +23,7 @@ class _WatchlistScreenState extends State<WatchlistScreen>{
 
   @override
   Widget build(BuildContext context){
-    final List<Widget> sample = List.generate(50, (index) => CustomEntityWidget(title: 'aaaaaaaaaaaaaaaa', subtitle: 'bbbbbbbbbbbbbbbbbbbbbbbbb'));
+    final List<Widget> sample = List.generate(50, (index) => CustomEntityWidget(title: 'aaaaaaaaaaaaaaaa', subtitle: 'bbbbbbbbbbbbbbbbbbbbbbbbb',hiddenValue: 'a',));
 
     final searchController = Provider.of<SearchControllerApp>(context, listen: false);
 
@@ -33,14 +33,17 @@ class _WatchlistScreenState extends State<WatchlistScreen>{
             title: 'Watch List',
             icon: Icons.add_box,
             onIconPressed: () async {
-              if(!await _watchListService.checkWatchListExist()){
+              bool a = await _watchListService.checkWatchListExist();
+              if(!a){
                 final userWatchList = await _watchListService.createWatchList();
                 final box = GetStorage();
-                box.write('watchlist_id', userWatchList?.watchListId);
+                box.write('watchlist_id', userWatchList?.watchListId.toString());
               }else{
                 final userWatchList = await _watchListService.getWatchListByUserId();
                 final box = GetStorage();
-                box.write('watchlist_id', userWatchList?.watchListId);
+                if(!box.hasData('watchlist_id')) {
+                  box.write('watchlist_id', userWatchList?.watchListId.toString());
+                }
               }
               Navigator.pushNamed(context, '/stock');
             },

@@ -46,23 +46,32 @@ class WatchListService{
   }
 
   Future<bool> checkWatchListExist() async {
-    final fullUrl = '$apiUrl/watchlists/user';
-
     final box = GetStorage();
+    String? userid = box.read<String>('user_id');
 
-    final Uri uri = Uri.parse(fullUrl).replace(queryParameters: {
-      'userId' : box.read<String>('user_id')
-    });
+    final fullUrl = '$apiUrl/watchlists/user/$userid';
+
+    final Uri uri = Uri.parse(fullUrl);
+
 
     try{
       final response = await http.get(
         uri,
         headers: {'Accept': 'application/json'},
       );
-      if(response.statusCode == 200){
-        final json = jsonDecode(response.body);
-        return !json.isEmpty();
-      } else{
+
+      if (response.statusCode == 200) {
+        final decodedBody = jsonDecode(response.body);
+
+        // Ensure the response is a List before checking its content
+        if (decodedBody is List) {
+          print(decodedBody.isNotEmpty);
+          return decodedBody.isNotEmpty; // Returns true if the list has items, false if empty
+        } else {
+          print('Unexpected response format: $decodedBody');
+          return false;
+        }
+      } else {
         print('Error: ${response.statusCode}, ${response.body}');
         return false;
       }
@@ -102,30 +111,61 @@ class WatchListService{
     }
   }
 
-  Future<WatchListResponse?> getWatchListByUserId() async{
-    final fullUrl = '$apiUrl/watchlists/user';
-
+  Future<WatchListResponse?> getWatchListByUserId() async {
     final box = GetStorage();
+    String? userid = box.read<String>('user_id');
 
-    final Uri uri = Uri.parse(fullUrl).replace(queryParameters: {
-      'userId' : box.read<String>('user_id')
-    });
+    final fullUrl = '$apiUrl/watchlists/user/$userid';
+    final Uri uri = Uri.parse(fullUrl);
 
-    try{
+    try {
       final response = await http.get(
         uri,
         headers: {'Accept': 'application/json'},
       );
-      if(response.statusCode == 200){
+
+      if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
-        return WatchListResponse.fromJson(json);
-      } else{
+
+        if (json is List && json.isNotEmpty) {
+          final firstElement = json[0]; // Get the first element
+          return WatchListResponse.fromJson(firstElement);
+        } else {
+          print('Unexpected response format or empty list: $json');
+          return null;
+        }
+      } else {
         print('Error: ${response.statusCode}, ${response.body}');
         return null;
       }
-    }catch (e) {
+    } catch (e) {
       print('Failed to fetch stocks: $e');
       return null;
+    }
+  }
+
+  Future<void> AddStockToWatchList(String stockId) async {
+    final box = GetStorage();
+
+    final watchListId = box.read('watchlist_id')?.toString();
+
+    final fullUrl = '$apiUrl/watchlists/stock/$watchListId/$stockId';
+    final Uri uri = Uri.parse(fullUrl);
+
+    try {
+      final response = await http.put(
+        uri,
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        print(json);
+      } else {
+        print('Error: ${response.statusCode}, ${response.body}');
+      }
+    } catch (e) {
+      print('Failed to fetch stocks: $e');
     }
   }
 }

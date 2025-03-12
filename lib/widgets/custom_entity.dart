@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import '../services/watchlist_service.dart';
 
 class CustomEntityWidget extends StatefulWidget {
   final String title;
   final String subtitle;
   final Color backgroundColor;
   final VoidCallback? onPressed; // Button press callback
+  final String hiddenValue; // Hidden integer value
 
   const CustomEntityWidget({
     super.key,
     required this.title,
     required this.subtitle,
     this.backgroundColor = Colors.white,
-    this.onPressed, // Allows for a tap action
+    this.onPressed,
+    required this.hiddenValue, // Default hidden value
   });
 
   @override
@@ -19,8 +22,16 @@ class CustomEntityWidget extends StatefulWidget {
 }
 
 class _CustomEntityWidgetState extends State<CustomEntityWidget> {
+  final WatchListService _watchListService = WatchListService();
   bool _isLongPressed = false;
   OverlayEntry? _overlayEntry;
+  late String _hiddenValue; // Local hidden value
+
+  @override
+  void initState() {
+    super.initState();
+    _hiddenValue = widget.hiddenValue; // Initialize with widget's value
+  }
 
   void _showButton(BuildContext context) {
     final overlay = Overlay.of(context);
@@ -33,10 +44,10 @@ class _CustomEntityWidgetState extends State<CustomEntityWidget> {
         top: tapPosition.dy,
         child: FloatingActionButton(
           onPressed: () {
-
+            _watchListService.AddStockToWatchList(_hiddenValue as String);
             _removeOverlay();
           },
-          child: const Icon(Icons.check),
+          child: const Icon(Icons.add),
         ),
       ),
     );
@@ -52,10 +63,12 @@ class _CustomEntityWidgetState extends State<CustomEntityWidget> {
     });
   }
 
+  String getHiddenValue() => _hiddenValue; // Getter method for the hidden value
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onPressed, // Call the provided button action
+      onTap: widget.onPressed,
       onLongPress: () {
         setState(() {
           _isLongPressed = true;

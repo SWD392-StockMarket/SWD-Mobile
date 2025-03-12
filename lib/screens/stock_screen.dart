@@ -71,7 +71,7 @@ class _StockScreenState extends State<StockScreen> {
                         (index) => CustomEntityWidget(
                       title: stocks[index].stockSymbol, // Extract stock symbol
                       subtitle: 'Company: ${stocks[index].companyName} | Market: ${stocks[index].marketName}',
-                          onPressed: (){Navigator.pushNamed(context, '/stock monitor');},// Extract details
+                          onPressed: (){Navigator.pushNamed(context, '/stock monitor');},hiddenValue: stocks[index].stockId.toString(), // Extract details
                     ),
                   );
                   return CustomEntityList(entities: s); // Pass to your list
