@@ -1,40 +1,123 @@
 import 'package:candlesticks/candlesticks.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Thêm package để định dạng ngày
+import 'package:source_code_mobile/services/stock_monitoring_service.dart';
 import 'package:source_code_mobile/widgets/candle_sticks_chart.dart';
 import '../widgets/movable_button.dart';
 
-class StockMonitorScreen extends StatefulWidget{
+class StockMonitorScreen extends StatefulWidget {
   const StockMonitorScreen({super.key});
 
   @override
   State<StockMonitorScreen> createState() => _StockMonitorScreenState();
 }
 
-class _StockMonitorScreenState extends State<StockMonitorScreen>{
-  final List<Candle> candles = [
-    Candle(date: DateTime.now().add(Duration(days: 1)), open: 100, high: 105, low: 98, close: 102, volume: 500),
-    Candle(date: DateTime.now().add(Duration(days: 2)), open: 102, high: 107, low: 99, close: 104, volume: 600),
-    Candle(date: DateTime.now().add(Duration(days: 3)), open: 104, high: 110, low: 101, close: 108, volume: 700),
-    Candle(date: DateTime.now().add(Duration(days: 4)), open: 108, high: 112, low: 106, close: 110, volume: 550),
-    Candle(date: DateTime.now().add(Duration(days: 5)), open: 110, high: 115, low: 109, close: 113, volume: 650),
-    Candle(date: DateTime.now().add(Duration(days: 6)), open: 113, high: 118, low: 111, close: 116, volume: 680),
-    Candle(date: DateTime.now().add(Duration(days: 7)), open: 116, high: 120, low: 114, close: 118, volume: 700),
-    Candle(date: DateTime.now().add(Duration(days: 8)), open: 118, high: 122, low: 117, close: 121, volume: 750),
-    Candle(date: DateTime.now().add(Duration(days: 9)), open: 121, high: 125, low: 120, close: 124, volume: 800),
-    Candle(date: DateTime.now().add(Duration(days: 10)), open: 124, high: 128, low: 123, close: 126, volume: 820),
-    Candle(date: DateTime.now().add(Duration(days: 11)), open: 126, high: 130, low: 125, close: 129, volume: 850),
-    Candle(date: DateTime.now().add(Duration(days: 12)), open: 129, high: 134, low: 127, close: 132, volume: 900),
-    Candle(date: DateTime.now().add(Duration(days: 13)), open: 132, high: 137, low: 130, close: 135, volume: 950),
-    Candle(date: DateTime.now().add(Duration(days: 14)), open: 135, high: 140, low: 133, close: 138, volume: 980),
-    Candle(date: DateTime.now().add(Duration(days: 15)), open: 138, high: 143, low: 136, close: 141, volume: 1000),
-  ];
+class _StockMonitorScreenState extends State<StockMonitorScreen> {
+  late StockService stockService;
+  late Future<List<Candle>> candlesFuture = Future.value([]);
+  List<Session> sessions = [];
+  Map<String, int> dateStockCount = {}; // Lưu số lượng stock theo ngày
+  DateTime? selectedDate;
+  final dateFormat = DateFormat('yyyy-MM-dd'); // Định dạng ngày
 
   @override
-  Widget build(BuildContext context){
+  void initState() {
+    super.initState();
+    stockService = StockService(token: "your_jwt_token_here");
+    _loadSessions();
+  }
+
+  Future<void> _loadSessions() async {
+    try {
+      sessions = await stockService.getSessions();
+      if (sessions.isNotEmpty) {
+        // Kiểm tra số lượng stock cho từng session
+        for (var session in sessions) {
+          final stocks = await stockService.getSessionStocks(session.sessionId);
+          final dateStr = session.startTime != null ? dateFormat.format(session.startTime!) : 'Unknown';
+          dateStockCount[dateStr] = stocks.length; // Lưu số lượng stock theo ngày
+          print('Session ${session.sessionId} on $dateStr has ${stocks.length} stocks');
+        }
+        setState(() {
+          selectedDate = sessions.first.startTime ?? DateTime.now();
+          candlesFuture = fetchCandlesForDate(selectedDate!);
+        });
+      }
+    } catch (e) {
+      print('Error loading sessions: $e');
+    }
+  }
+
+  Future<List<Candle>> fetchCandlesForDate(DateTime date) async {
+    // Tìm session tương ứng với ngày được chọn
+    final session = sessions.firstWhere(
+          (s) => s.startTime != null && dateFormat.format(s.startTime!) == dateFormat.format(date),
+      orElse: () => sessions.first, // Nếu không tìm thấy, lấy session đầu tiên
+    );
+    final stocks = await stockService.getSessionStocks(session.sessionId);
+    return stocks.map((stock) => Candle(
+      date: stock.dateTime ?? date,
+      open: stock.openPrice ?? 0,
+      high: stock.highPrice ?? 0,
+      low: stock.lowPrice ?? 0,
+      close: stock.closePrice ?? 0,
+      volume: stock.volume ?? 1, // Đảm bảo volume > 0
+    )).toList();
+  }
+
+  void _onDateChanged(String? newDateStr) {
+    if (newDateStr != null) {
+      final newDate = dateFormat.parse(newDateStr);
+      if (newDate != selectedDate) {
+        setState(() {
+          selectedDate = newDate;
+          candlesFuture = fetchCandlesForDate(newDate);
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body:Stack(
+      appBar: AppBar(
+        title: const Text('Stock Monitor'),
+        actions: [
+          if (sessions.isNotEmpty)
+            DropdownButton<String>(
+              value: selectedDate != null ? dateFormat.format(selectedDate!) : null,
+              items: sessions
+                  .map((session) => session.startTime)
+                  .where((date) => date != null)
+                  .map((date) => dateFormat.format(date!))
+                  .toSet()
+                  .where((dateStr) => (dateStockCount[dateStr] ?? 0) >= 3) // Chỉ hiển thị ngày có >= 5 stock
+                  .map((dateStr) => DropdownMenuItem<String>(
+                value: dateStr,
+                child: Text(dateStr),
+              ))
+                  .toList(),
+              onChanged: _onDateChanged,
+              hint: const Text('Select Date'),
+            ),
+        ],
+      ),
+      body: Stack(
         children: [
-          CandlestickChart(candles: candles),
+          FutureBuilder<List<Candle>>(
+            future: candlesFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text('No data available'));
+              } else {
+                return CandlestickChart(candles: snapshot.data!);
+              }
+            },
+          ),
           MovableButton(
             icons: [Icons.bar_chart, Icons.search, Icons.settings],
             onPressedActions: [
@@ -43,7 +126,7 @@ class _StockMonitorScreenState extends State<StockMonitorScreen>{
                   () => print("Settings Clicked!"),
             ],
           ),
-      ],
+        ],
       ),
     );
   }
