@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen2> {
     _initializeNotifications();
     _requestPermission();
     _configureFCM();
-    _getToken();
+    _getToken(context);
   }
 
   void _requestPermission() async {
@@ -134,11 +134,18 @@ class _HomeScreenState extends State<HomeScreen2> {
   }
 }
 
-void _getToken() async {
+void _getToken(BuildContext context) async {
   String? token = await FirebaseMessaging.instance.getToken();
   print("FCM Token: $token");
   final box = GetStorage();
   box.write('FCM_Token', token);
+
+  Future.delayed(Duration(seconds: 1), () {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()), // Your real home screen
+    );
+  });
 }
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =

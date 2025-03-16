@@ -54,14 +54,13 @@ class AuthService {
 
       if(response.statusCode == 200){
         final json = jsonDecode(response.body);
-        print(json);
         return true;
       } else {
         print('Error: ${response.statusCode}, ${response.body}');
         return false;
       }
     } catch(e) {
-      print('Failed to fetch stocks: $e');
+      print('Failed to fetch API: $e');
       return false;
     }
   }
