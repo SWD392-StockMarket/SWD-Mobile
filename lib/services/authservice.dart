@@ -25,6 +25,7 @@ class AuthService {
 
         if (loginResponse != null) {
           await _saveToken(loginResponse);
+          await _createToken();
           return true; // Login successful
         }
       }
@@ -34,13 +35,42 @@ class AuthService {
     return false; // Login failed
   }
 
+  Future<bool> _createToken() async{
+    final box =  GetStorage();
+
+    final userId = box.read<String>('user_id');
+
+    final fcmToken = box.read<String>('FCM_Token');
+
+    final fullUrl = '$apiUrl/auth/$userId/$fcmToken';
+
+    final Uri uri = Uri.parse(fullUrl);
+
+    try {
+      final response = await http.put(
+        uri,
+        headers: {'Accept': 'application/json'},
+      );
+
+      if(response.statusCode == 200){
+        final json = jsonDecode(response.body);
+        print(json);
+        return true;
+      } else {
+        print('Error: ${response.statusCode}, ${response.body}');
+        return false;
+      }
+    } catch(e) {
+      print('Failed to fetch stocks: $e');
+      return false;
+    }
+  }
+
   // Store token in local storage
   Future<void> _saveToken(LoginResponse token) async {
     final box = GetStorage();
     box.write('jwt_token', token.token);
     box.write('user_id', token.userId.toString());
-    final i = box.read<String>('user_id');
-    print('$i');
   }
 
   // Get stored token
@@ -51,8 +81,12 @@ class AuthService {
 
   // Logout: Remove token
   Future<void> logout() async {
+    GetStorage().erase();
+  }
+
+  static bool isUserLoggedIn() {
     final box = GetStorage();
-    box.remove('jwt_token');
+    return box.hasData('jwt_token');
   }
 
   // Thêm phương thức register

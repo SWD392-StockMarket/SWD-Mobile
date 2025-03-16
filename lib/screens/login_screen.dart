@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       if (success) {
-        Navigator.pushNamed(context, '/watchlist');
+        Navigator.pushNamed(context, '/home');
       } else {
         setState(() {
           _errorMessage = 'Invalid username or password';

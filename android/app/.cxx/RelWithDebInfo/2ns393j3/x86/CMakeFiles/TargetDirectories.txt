@@ -1,0 +1,2 @@
+D:/studying/FPT-lessons/SWD-392/source_code_mobile/android/app/.cxx/RelWithDebInfo/2ns393j3/x86/CMakeFiles/edit_cache.dir
+D:/studying/FPT-lessons/SWD-392/source_code_mobile/android/app/.cxx/RelWithDebInfo/2ns393j3/x86/CMakeFiles/rebuild_cache.dir

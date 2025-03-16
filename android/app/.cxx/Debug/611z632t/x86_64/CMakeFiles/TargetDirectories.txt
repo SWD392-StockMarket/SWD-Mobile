@@ -1,0 +1,2 @@
+D:/studying/FPT-lessons/SWD-392/source_code_mobile/android/app/.cxx/Debug/611z632t/x86_64/CMakeFiles/edit_cache.dir
+D:/studying/FPT-lessons/SWD-392/source_code_mobile/android/app/.cxx/Debug/611z632t/x86_64/CMakeFiles/rebuild_cache.dir

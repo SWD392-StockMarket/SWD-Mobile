@@ -3,20 +3,22 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id 'org.jetbrains.kotlin.android' version '1.9.22' apply false
 }
 
 android {
     namespace = "com.example.source_code_mobile"
-    compileSdk = compileSdk = Integer.parseInt(project.property("FLUTTER_COMPILE_SDK_VERSION"))
+    compileSdk = Integer.parseInt(project.property("FLUTTER_COMPILE_SDK_VERSION"))
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 
     defaultConfig {
@@ -28,6 +30,7 @@ android {
         targetSdk = Integer.parseInt(project.property("FLUTTER_TARGET_SDK_VERSION"))
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -41,4 +44,10 @@ android {
 
 flutter {
     source = "../.."
+}
+
+apply plugin: 'com.google.gms.google-services'
+dependencies {
+    implementation 'com.google.firebase:firebase-messaging:24.1.0' // Firebase Messaging
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'  // ✅ Correct place
 }
