@@ -95,7 +95,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return GradientContainer(
       scaffold: Scaffold(
-        appBar: const GradientAppBar(title: 'Profile'),
+        appBar: const GradientAppBar(
+            title: 'Profile',
+            showBackButton: true,
+        ),
         backgroundColor: Colors.transparent,
         body: FutureBuilder<UserResponse?>(
           future: _userProfile,
