@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:source_code_mobile/models/stock_reponse.dart';
+import 'package:source_code_mobile/services/authservice.dart';
 import 'package:source_code_mobile/widgets/custom_entity.dart';
 import 'package:source_code_mobile/widgets/gradient_container.dart';
 import '../widgets/search_bar.dart';
 import '../controllers/search_controller.dart';
 import '../widgets/custom_list.dart';
 import '../services/watchlist_service.dart';
+import '../widgets/footer_menu.dart';
 
 class StockScreen extends StatefulWidget {
   const StockScreen({super.key});
@@ -18,6 +20,7 @@ class StockScreen extends StatefulWidget {
 class _StockScreenState extends State<StockScreen> {
   late Future<StockResponse?> stockFuture;
   final WatchListService _watchListService = WatchListService();
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -71,7 +74,14 @@ class _StockScreenState extends State<StockScreen> {
                         (index) => CustomEntityWidget(
                       title: stocks[index].stockSymbol, // Extract stock symbol
                       subtitle: 'Company: ${stocks[index].companyName} | Market: ${stocks[index].marketName}',
-                          onPressed: (){Navigator.pushNamed(context, '/stock monitor');},hiddenValue: stocks[index].stockId.toString(), // Extract details
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/stock monitor',
+                                arguments: stocks[index].stockId.toString(), // Pass hiddenValue
+                              );
+                            },
+                            hiddenValue: stocks[index].stockId.toString(), // Extract details
                     ),
                   );
                   return CustomEntityList(entities: s); // Pass to your list
@@ -80,6 +90,19 @@ class _StockScreenState extends State<StockScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: ScrollableFooterMenu(buttons:
+      [
+        FooterButton(icon: Icons.home, label: "Home", onTap: () {Navigator.pushNamed(context, '/home');}),
+        FooterButton(icon: Icons.playlist_add, label: "Watch List", onTap: () {Navigator.pushNamed(context, '/watchlist');}),
+        FooterButton(icon: Icons.newspaper, label: "News", onTap: () {Navigator.pushNamed(context, '/news');}),
+        FooterButton(icon: Icons.monetization_on, label: "Stock", onTap: () {Navigator.pushNamed(context, '/stock');}),
+        FooterButton(icon: Icons.person, label: "Profile", onTap: () {Navigator.pushNamed(context, '/profile');}),
+        FooterButton(icon: Icons.logout, label: "Logout", onTap: () {
+          _authService.logout();
+          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        }),
+      ]
       ),
     ),
     );

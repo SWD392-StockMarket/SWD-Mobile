@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:source_code_mobile/services/authservice.dart';
 import 'package:source_code_mobile/widgets/gradient_app_bar.dart';
 import '../widgets/gradient_container.dart';
 import '../widgets/search_bar.dart';
@@ -20,6 +21,7 @@ class WatchlistScreen extends StatefulWidget{
 
 class _WatchlistScreenState extends State<WatchlistScreen>{
   final WatchListService _watchListService = WatchListService();
+  final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context){
@@ -93,13 +95,15 @@ class _WatchlistScreenState extends State<WatchlistScreen>{
         ),
         bottomNavigationBar: ScrollableFooterMenu(buttons:
         [
-          FooterButton(icon: Icons.home, label: "Home", onTap: () {}),
-          FooterButton(icon: Icons.search, label: "Search", onTap: () {}),
-          FooterButton(icon: Icons.shopping_cart, label: "Cart", onTap: () {}),
-          FooterButton(icon: Icons.favorite, label: "Favorites", onTap: () {}),
-          FooterButton(icon: Icons.person, label: "Profile", onTap: () {}),
-          FooterButton(icon: Icons.settings, label: "Settings", onTap: () {}),
-          FooterButton(icon: Icons.logout, label: "Logout", onTap: () {Navigator.pushNamed(context, '/home');}),
+          FooterButton(icon: Icons.home, label: "Home", onTap: () {Navigator.pushNamed(context, '/home');}),
+          FooterButton(icon: Icons.playlist_add, label: "Watch List", onTap: () {Navigator.pushNamed(context, '/watchlist');}),
+          FooterButton(icon: Icons.newspaper, label: "News", onTap: () {Navigator.pushNamed(context, '/news');}),
+          FooterButton(icon: Icons.monetization_on, label: "Stock", onTap: () {Navigator.pushNamed(context, '/stock');}),
+          FooterButton(icon: Icons.person, label: "Profile", onTap: () {Navigator.pushNamed(context, '/profile');}),
+          FooterButton(icon: Icons.logout, label: "Logout", onTap: () {
+            _authService.logout();
+            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          }),
         ]
         ),
       ),

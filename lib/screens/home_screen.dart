@@ -21,6 +21,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/gradient_container.dart';
 import '../widgets/gradient_app_bar.dart';
+import '../widgets/footer_menu.dart';
+import '../services/authservice.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -39,6 +41,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService _authService = AuthService();
     return GradientContainer(scaffold:
         Scaffold(
       backgroundColor: Colors.transparent,
@@ -86,16 +89,19 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        selectedItemColor: Colors.orange,
-        unselectedItemColor: Colors.white,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.article), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: ''),
-        ],
-      ),
+          bottomNavigationBar: ScrollableFooterMenu(buttons:
+          [
+            FooterButton(icon: Icons.home, label: "Home", onTap: () {Navigator.pushNamed(context, '/home');}),
+            FooterButton(icon: Icons.playlist_add, label: "Watch List", onTap: () {Navigator.pushNamed(context, '/watchlist');}),
+            FooterButton(icon: Icons.newspaper, label: "News", onTap: () {Navigator.pushNamed(context, '/news');}),
+            FooterButton(icon: Icons.monetization_on, label: "Stock", onTap: () {Navigator.pushNamed(context, '/stock');}),
+            FooterButton(icon: Icons.person, label: "Profile", onTap: () {Navigator.pushNamed(context, '/profile');}),
+            FooterButton(icon: Icons.logout, label: "Logout", onTap: () {
+              _authService.logout();
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            }),
+          ]
+          ),
     ));
   }
 

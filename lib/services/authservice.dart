@@ -25,7 +25,6 @@ class AuthService {
 
         if (loginResponse != null) {
           await _saveToken(loginResponse);
-          await _createToken();
           return true; // Login successful
         }
       }
@@ -35,14 +34,12 @@ class AuthService {
     return false; // Login failed
   }
 
-  Future<bool> _createToken() async{
+  Future<bool> createToken(String? token) async{
     final box =  GetStorage();
 
     final userId = box.read<String>('user_id');
 
-    final fcmToken = box.read<String>('FCM_Token');
-
-    final fullUrl = '$apiUrl/auth/$userId/$fcmToken';
+    final fullUrl = '$apiUrl/auth/$userId/$token';
 
     final Uri uri = Uri.parse(fullUrl);
 
@@ -53,7 +50,6 @@ class AuthService {
       );
 
       if(response.statusCode == 200){
-        final json = jsonDecode(response.body);
         return true;
       } else {
         print('Error: ${response.statusCode}, ${response.body}');
