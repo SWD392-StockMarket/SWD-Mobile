@@ -57,7 +57,7 @@ class ScrollableFooterMenuState extends State<ScrollableFooterMenu> {
             ),
           ],
         ),
-        child: ClipRRect(  // **Ensures content is clipped inside rounded border**
+        child: ClipRRect(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
@@ -71,14 +71,13 @@ class ScrollableFooterMenuState extends State<ScrollableFooterMenu> {
             },
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              clipBehavior: Clip.hardEdge, // **Ensures clicks don't leak outside**
-              physics: const BouncingScrollPhysics(), // **Smooth scrolling effect**
+              clipBehavior: Clip.hardEdge,
+              physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(widget.buttons.length, (index) {
-                    bool isSelected = selectedIndex == index;
                     return GestureDetector(
                       onTap: () {
                         setState(() {
@@ -94,7 +93,7 @@ class ScrollableFooterMenuState extends State<ScrollableFooterMenu> {
                           vertical: isExpanded ? 4 : 2,
                         ),
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.blue.shade100 : Colors.transparent,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -103,7 +102,7 @@ class ScrollableFooterMenuState extends State<ScrollableFooterMenu> {
                             Icon(
                               widget.buttons[index].icon,
                               size: isExpanded ? 24 : 22,
-                              color: isSelected ? Colors.blue : Colors.black,
+                              color: Colors.black,
                             ),
                             AnimatedSize(
                               duration: const Duration(milliseconds: 200),
@@ -115,7 +114,7 @@ class ScrollableFooterMenuState extends State<ScrollableFooterMenu> {
                                   child: Text(
                                     widget.buttons[index].label,
                                     style: const TextStyle(
-                                      color: Colors.blue,
+                                      color: Colors.black,
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                     ),

@@ -31,7 +31,7 @@ class _NewsScreenState extends State<NewsScreen> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         setState(() {
-          news = data['articles']; // ✅ Extract the articles array
+          news = data['articles'];
         });
       } else {
         throw Exception('Failed to load news');
@@ -41,7 +41,6 @@ class _NewsScreenState extends State<NewsScreen> {
     }
   }
 
-  //CHUYỂN HƯỚNG USER TỚI TRANG WEB
   Future<void> _launchUrl(Uri url) async {
     if (url.toString().isNotEmpty && await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.inAppBrowserView);
@@ -50,15 +49,13 @@ class _NewsScreenState extends State<NewsScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final searchController = Provider.of<SearchControllerApp>(context, listen: false);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
-      ),
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
       home: Scaffold(
         appBar: AppBar(
           title: Row(
@@ -68,10 +65,20 @@ class _NewsScreenState extends State<NewsScreen> {
               const Spacer(),
               SizedBox(
                 width: 200,
-                child: SearchBar(
-                  leading: const Icon(Icons.search),
-                  controller: searchController.controller,
-                  onChanged: searchController.updateSearch,
+                child: Consumer<SearchControllerApp>(
+                  builder: (context, search, child) {
+                    return TextField(
+                      controller: search.controller,
+                      decoration: const InputDecoration(
+                        hintText: 'Search news...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white24,
+                      ),
+                      onChanged: search.updateSearch,
+                    );
+                  },
                 ),
               ),
               const SizedBox(width: 10),
@@ -80,85 +87,85 @@ class _NewsScreenState extends State<NewsScreen> {
           toolbarHeight: 100,
           backgroundColor: Colors.black,
         ),
-        body: news.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-          itemCount: news.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.grey.shade800),
+        body: Consumer<SearchControllerApp>(
+          builder: (context, search, child) {
+            final filteredNews = news.where((article) {
+              final title = article['title']?.toLowerCase() ?? '';
+              return title.contains(search.searchQuery);
+            }).toList();
+
+            return filteredNews.isEmpty
+                ? const Center(child: Text("No results found"))
+                : ListView.builder(
+              itemCount: filteredNews.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.grey.shade800)),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            filteredNews[index]['urlToImage'] ?? 'https://picsum.photos/300/300',
+                            height: 60,
+                            width: 60,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: ListTile(
+                            title: Text(
+                              filteredNews[index]['title'] ?? 'No Title Available',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            subtitle: Text(
+                              filteredNews[index]['description'] ?? 'No Description Available',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+                            ),
+                            onTap: () async {
+                              final String? url = filteredNews[index]['url'];
+                              if (url != null && url.isNotEmpty) {
+                                await _launchUrl(Uri.parse(url));
+                              } else {
+                                print("No URL available for this news article.");
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // News Image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        news[index]['urlToImage'] ?? 'https://picsum.photos/300/300', // ✅ Fallback image
-                        height: 60,
-                        width: 60,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // News Title & Description
-                    Expanded(
-                      child: ListTile(
-                        title: Text(
-                          news[index]['title'] ?? 'No Title Available',  // ✅ Handle null title
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        subtitle: Text(
-                          news[index]['description'] ?? 'No Description Available',  // ✅ Handle null description
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                        onTap: () async {
-                          final String? url = news[index]['url'];
-                          if (url != null && url.isNotEmpty) {
-                            await _launchUrl(Uri.parse(url));
-                          } else {
-                            print("No URL available for this news article.");
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                );
+              },
             );
           },
         ),
-          bottomNavigationBar: ScrollableFooterMenu(buttons:
-          [
-            FooterButton(icon: Icons.home, label: "Home", onTap: () {Navigator.pushNamed(context, '/home');}),
-            FooterButton(icon: Icons.playlist_add, label: "Watch List", onTap: () {Navigator.pushNamed(context, '/watchlist');}),
-            FooterButton(icon: Icons.newspaper, label: "News", onTap: () {Navigator.pushNamed(context, '/news');}),
-            FooterButton(icon: Icons.monetization_on, label: "Stock", onTap: () {Navigator.pushNamed(context, '/stock');}),
-            FooterButton(icon: Icons.person, label: "Profile", onTap: () {Navigator.pushNamed(context, '/profile');}),
-            FooterButton(icon: Icons.logout, label: "Logout", onTap: () {
-              _authService.logout();
-              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-            }),
-          ]
-          ),
+        bottomNavigationBar: ScrollableFooterMenu(buttons: [
+          FooterButton(icon: Icons.home, label: "Home", onTap: () { Navigator.pushNamed(context, '/home'); }),
+          FooterButton(icon: Icons.playlist_add, label: "Watch List", onTap: () { Navigator.pushNamed(context, '/watchlist'); }),
+          FooterButton(icon: Icons.newspaper, label: "News", onTap: () { Navigator.pushNamed(context, '/news'); }),
+          FooterButton(icon: Icons.monetization_on, label: "Stock", onTap: () { Navigator.pushNamed(context, '/stock'); }),
+          FooterButton(icon: Icons.person, label: "Profile", onTap: () { Navigator.pushNamed(context, '/profile'); }),
+          FooterButton(icon: Icons.logout, label: "Logout", onTap: () {
+            _authService.logout();
+            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          }),
+        ]),
       ),
     );
   }
