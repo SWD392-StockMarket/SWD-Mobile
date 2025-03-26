@@ -45,10 +45,13 @@ class HomeScreen extends StatelessWidget {
     return GradientContainer(scaffold:
         Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: const GradientAppBar(
-        title: 'FUStock',
-        icon: Icons.account_circle,
-      ),
+          appBar: GradientAppBar(
+            title: 'FUStock',
+            icon: Icons.account_circle,
+            onIconPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+          ),
       body: Column(
         children: [
           Padding(

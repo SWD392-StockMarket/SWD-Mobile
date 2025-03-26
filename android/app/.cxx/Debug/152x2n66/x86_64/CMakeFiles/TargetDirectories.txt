@@ -1,0 +1,2 @@
+D:/SWD/MobileLastGame/SWD-Mobile/android/app/.cxx/Debug/152x2n66/x86_64/CMakeFiles/edit_cache.dir
+D:/SWD/MobileLastGame/SWD-Mobile/android/app/.cxx/Debug/152x2n66/x86_64/CMakeFiles/rebuild_cache.dir
