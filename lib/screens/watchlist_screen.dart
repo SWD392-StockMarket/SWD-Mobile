@@ -228,9 +228,13 @@ class _WatchlistScreenState extends State<WatchlistScreen> with SingleTickerProv
                           (index) => CustomEntityWidget(
                         title: stocks[index].stockSymbol,
                         subtitle: 'Company: ${stocks[index].companyName} | Market: ${stocks[index].marketName}',
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/stock monitor');
-                        },
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/stock monitor',
+                                arguments: stocks[index].stockId.toString(), // Pass hiddenValue
+                              );
+                            },
                         hiddenValue: stocks[index].stockId.toString(),
                       ),
                     );
