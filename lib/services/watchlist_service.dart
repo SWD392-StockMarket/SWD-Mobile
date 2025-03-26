@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:source_code_mobile/models/user_response.dart';
+import 'package:source_code_mobile/models/watchlist_response.dart';
 import '../models/stock_reponse.dart';
 
 class WatchListService{
@@ -166,6 +167,31 @@ class WatchListService{
       }
     } catch (e) {
       print('Failed to fetch stocks: $e');
+    }
+  }
+
+// Phương thức mới để lấy danh sách theo dõi theo userId
+  Future<List<WatchlistResponse>?> fetchWatchlistsByUserId(int userId, {String? searchTerm}) async {
+    final fullUrl = '$apiUrl/watchlists/user/$userId'; // Dùng userId động
+    final Uri uri = Uri.parse(fullUrl).replace(queryParameters: {
+      if (searchTerm != null) 'searchTerm': searchTerm, // Thêm searchTerm nếu có
+    });
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {'Accept': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<WatchlistResponse>.from(data.map((x) => WatchlistResponse.fromJson(x)));
+      } else {
+        print('Error: ${response.statusCode}, ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Failed to fetch watchlists: $e');
+      return null;
     }
   }
 }
