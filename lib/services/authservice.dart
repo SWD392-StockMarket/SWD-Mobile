@@ -148,7 +148,7 @@ class AuthService {
 
     if (userId == null || token == null) return false;
 
-    final fullUrl = '$apiUrl/users/2';
+    final fullUrl = '$apiUrl/users/$userId';
 
     try {
       final response = await http.put(
