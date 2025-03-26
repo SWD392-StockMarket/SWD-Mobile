@@ -1,6 +1,7 @@
 import 'package:candlesticks/candlesticks.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Thêm package để định dạng ngày
+import 'package:get_storage/get_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:source_code_mobile/services/stock_monitoring_service.dart';
 import 'package:source_code_mobile/widgets/candle_sticks_chart.dart';
 import '../widgets/movable_button.dart';
@@ -14,28 +15,38 @@ class StockMonitorScreen extends StatefulWidget {
 
 class _StockMonitorScreenState extends State<StockMonitorScreen> {
   late StockService stockService;
-  late Future<List<Candle>> candlesFuture = Future.value([]);
+  late Future<List<Candle>> candlesFuture;
   List<Session> sessions = [];
-  Map<String, int> dateStockCount = {}; // Lưu số lượng stock theo ngày
+  Map<String, int> dateStockCount = {}; // Store stock count by date
   DateTime? selectedDate;
-  final dateFormat = DateFormat('yyyy-MM-dd'); // Định dạng ngày
+  final dateFormat = DateFormat('yyyy-MM-dd'); // Date format
+  String? hiddenValue; // Store the route argument
 
   @override
   void initState() {
     super.initState();
-    stockService = StockService(token: "your_jwt_token_here");
-    _loadSessions();
+    final box = GetStorage();
+    final token = box.read<String>('jwt_token');
+
+    // Delay initialization to ensure ModalRoute is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      hiddenValue = ModalRoute.of(context)!.settings.arguments as String;
+      stockService = StockService(token: token, stockId: hiddenValue!);
+      _loadSessions();
+    });
+
+    // Initialize with an empty future
+    candlesFuture = Future.value([]);
   }
 
   Future<void> _loadSessions() async {
     try {
-      sessions = await stockService.getSessions();
+      sessions = await stockService.getSessionsByStockId();
       if (sessions.isNotEmpty) {
-        // Kiểm tra số lượng stock cho từng session
         for (var session in sessions) {
           final stocks = await stockService.getSessionStocks(session.sessionId);
           final dateStr = session.startTime != null ? dateFormat.format(session.startTime!) : 'Unknown';
-          dateStockCount[dateStr] = stocks.length; // Lưu số lượng stock theo ngày
+          dateStockCount[dateStr] = stocks.length;
           print('Session ${session.sessionId} on $dateStr has ${stocks.length} stocks');
         }
         setState(() {
@@ -49,10 +60,9 @@ class _StockMonitorScreenState extends State<StockMonitorScreen> {
   }
 
   Future<List<Candle>> fetchCandlesForDate(DateTime date) async {
-    // Tìm session tương ứng với ngày được chọn
     final session = sessions.firstWhere(
           (s) => s.startTime != null && dateFormat.format(s.startTime!) == dateFormat.format(date),
-      orElse: () => sessions.first, // Nếu không tìm thấy, lấy session đầu tiên
+      orElse: () => sessions.first,
     );
     final stocks = await stockService.getSessionStocks(session.sessionId);
     return stocks.map((stock) => Candle(
@@ -61,7 +71,7 @@ class _StockMonitorScreenState extends State<StockMonitorScreen> {
       high: stock.highPrice ?? 0,
       low: stock.lowPrice ?? 0,
       close: stock.closePrice ?? 0,
-      volume: stock.volume ?? 1, // Đảm bảo volume > 0
+      volume: stock.volume ?? 1, // Ensure volume > 0
     )).toList();
   }
 
@@ -91,7 +101,7 @@ class _StockMonitorScreenState extends State<StockMonitorScreen> {
                   .where((date) => date != null)
                   .map((date) => dateFormat.format(date!))
                   .toSet()
-                  .where((dateStr) => (dateStockCount[dateStr] ?? 0) >= 3) // Chỉ hiển thị ngày có >= 5 stock
+                  .where((dateStr) => (dateStockCount[dateStr] ?? 0) >= 3) // Only show dates with >= 3 stocks
                   .map((dateStr) => DropdownMenuItem<String>(
                 value: dateStr,
                 child: Text(dateStr),

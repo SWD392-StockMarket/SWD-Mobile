@@ -5,8 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class StockService {
   final String apiUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:5146/api/v1';
   final String? token;
+  final String? stockId;
 
-  StockService({this.token});
+  StockService({this.token,this.stockId});
 
   Future<List<Session>> getSessions() async {
     final fullUrl = '$apiUrl/sessions';
@@ -31,6 +32,34 @@ class StockService {
       throw Exception('Error fetching sessions: $e');
     }
   }
+
+  Future<List<Session>> getSessionsByStockId() async {
+    final fullUrl = '$apiUrl/sessions/stocks/$stockId';
+
+    try {
+      final response = await http.get(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body); // Parse as a List
+        print('Raw API response: $data');
+
+        return data.map((json) => Session.fromJson(json)).toList(); // Convert to Session objects
+      } else {
+        throw Exception('Failed to load sessions: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching sessions: $e');
+    }
+  }
+
+
+
 
   Future<List<StockInSession>> getSessionStocks(int sessionId) async {
     final fullUrl = '$apiUrl/sessions/$sessionId/stocks';
