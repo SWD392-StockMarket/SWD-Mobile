@@ -94,7 +94,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: const Text("Watch List"),
+          title: const Text("Watch List", style: TextStyle(color: Colors.white),),
           actions: [
             IconButton(
               icon: const Icon(Icons.add_box),

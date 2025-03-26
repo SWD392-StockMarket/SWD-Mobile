@@ -145,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildTextField("Name", inputWidth, controller: _nameController),
                     _buildTextField("Email", inputWidth, controller: _emailController),
                     _buildTextField("Phone Number", inputWidth, controller: _phoneController),
-                    _buildTextField("Subscription", inputWidth, controller: _subscriptionController),
+                    _buildTextField("Subscription", inputWidth, controller: _subscriptionController, isSubscription: true),
                     if (_isEditing)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6),
@@ -213,18 +213,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildTextField(String label, double width, {TextEditingController? controller}) {
+  Widget _buildTextField(String label, double width, {TextEditingController? controller, bool isSubscription = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: SizedBox(
         width: width,
         child: TextField(
           controller: controller,
-          readOnly: !_isEditing, // Chỉ cho chỉnh sửa khi _isEditing = true
+          readOnly: isSubscription || !_isEditing, // Chỉ cho chỉnh sửa khi _isEditing = true
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
-            labelText: _isEditing ? label : null, // Hiển thị label khi không chỉnh sửa
-            hintText: _isEditing ? null : label, // Hiển thị hint khi chỉnh sửa
             filled: true,
             fillColor: Colors.grey[300],
             border: OutlineInputBorder(

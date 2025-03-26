@@ -41,7 +41,9 @@ class _StockScreenState extends State<StockScreen> {
     return GradientContainer(scaffold:
     Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(backgroundColor: Colors.transparent),
+      appBar: AppBar(          backgroundColor: Colors.transparent,
+        title: const Text("Stock", style: TextStyle(color: Colors.white),),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
