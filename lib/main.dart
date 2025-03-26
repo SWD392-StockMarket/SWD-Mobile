@@ -51,7 +51,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => SearchControllerApp()),
       ],
-      child: MyApp(initialRoute: token != null ? '/stock' : '/'),
+      child: MyApp(initialRoute: token != null ? '/watchlist' : '/'),
     ),
   );
 }
@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: '/watchlist',
+      initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
