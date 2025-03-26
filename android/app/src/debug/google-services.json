@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "387403090568",
+    "project_id": "swd-notifications",
+    "storage_bucket": "swd-notifications.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387403090568:android:8dcfcc4286197617052d3d",
+        "android_client_info": {
+          "package_name": "com.example.source_code_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDbPy6xy9zHTpOPN_1HWbHocS9vUpE0nQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
