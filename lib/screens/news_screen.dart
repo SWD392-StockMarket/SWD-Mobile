@@ -157,6 +157,7 @@ class _NewsScreenState extends State<NewsScreen> {
               _authService.logout();
               Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
             }),
+            FooterButton(icon: Icons.payment, label: "PayPal", onTap: () {Navigator.pushNamed(context, '/paypal');}),
           ]
           ),
       ),

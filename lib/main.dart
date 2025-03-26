@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: '/paypal',
+      initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),

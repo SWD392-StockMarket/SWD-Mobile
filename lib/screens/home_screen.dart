@@ -106,12 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 onChanged: _onSearchChanged,
               ),
             ),
-            // Filter Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(4, (index) => filterButton('Filter')),
-            ),
-            const SizedBox(height: 10),
             // Stock List
             SizedBox(
               height: 200,
@@ -251,6 +245,9 @@ class _HomeScreenState extends State<HomeScreen> {
               _authService.logout();
               Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
             }),
+            FooterButton(icon: Icons.payment, label: "PayPal", onTap: () {
+                Navigator.pushNamed(context, '/paypal');
+              }),
           ],
         ),
       ),

@@ -104,6 +104,7 @@ class _StockScreenState extends State<StockScreen> {
           _authService.logout();
           Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
         }),
+        FooterButton(icon: Icons.payment, label: "PayPal", onTap: () {Navigator.pushNamed(context, '/paypal');}),
       ]
       ),
     ),
