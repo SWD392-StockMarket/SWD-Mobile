@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:source_code_mobile/services/authservice.dart';
-import '../widgets/gradient_container.dart';
 import 'package:source_code_mobile/models/watchlist_response.dart';
+import 'package:source_code_mobile/services/authservice.dart';
 import 'package:source_code_mobile/widgets/custom_entity.dart';
+import 'package:source_code_mobile/widgets/gradient_container.dart';
 import '../widgets/search_bar.dart';
 import '../controllers/search_controller.dart';
 import '../widgets/custom_list.dart';
@@ -23,28 +23,56 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   late Future<List<WatchlistResponse>?> watchlistFuture;
   final WatchListService _watchListService = WatchListService();
   final AuthService _authService = AuthService();
+  final box = GetStorage(); // Khởi tạo GetStorage
+
+  // Hàm lấy userId từ GetStorage
+  int? _getUserId() {
+    final String? userId = box.read<String>('user_id');
+    if (userId == null) {
+      return null; // Hoặc xử lý lỗi nếu cần
+    }
+    return int.tryParse(userId);
+  }
+
 
   @override
   void initState() {
     super.initState();
-    int userId = 10; // Thay bằng userId thực tế
-    watchlistFuture = _watchListService.fetchWatchlistsByUserId(userId);
+    final int? userId = _getUserId();
+    if (userId == null) {
+      // Nếu không có userId, có thể điều hướng về màn hình đăng nhập
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, '/');
+      });
+      watchlistFuture = Future.value([]); // Trả về danh sách rỗng tạm thời
+    } else {
+      watchlistFuture = _watchListService.fetchWatchlistsByUserId(userId);
+    }
   }
 
   void _onSearchChanged(String searchTerm) {
     setState(() {
-      int userId = 10; // Thay bằng userId thực tế
-      watchlistFuture = _watchListService.fetchWatchlistsByUserId(
-        userId,
-        searchTerm: searchTerm.isNotEmpty ? searchTerm : null,
-      );
+      final int? userId = _getUserId();
+      if (userId != null) {
+        watchlistFuture = _watchListService.fetchWatchlistsByUserId(
+          userId,
+          searchTerm: searchTerm.isNotEmpty ? searchTerm : null,
+        );
+      }
     });
   }
 
   void _handleAddWatchlist() async {
-    bool exists = await _watchListService.checkWatchListExist();
-    final box = GetStorage();
+    final int? userId = _getUserId();
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User ID is missing. Please log in.')),
+      );
+      Navigator.pushReplacementNamed(context, '/');
+      return;
+    }
 
+    bool exists = await _watchListService.checkWatchListExist();
     if (!exists) {
       final userWatchList = await _watchListService.createWatchList();
       box.write('watchlist_id', userWatchList?.watchListId.toString());
