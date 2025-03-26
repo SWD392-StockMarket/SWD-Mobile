@@ -5,8 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
-
+import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:source_code_mobile/screens/news_screen.dart';
+import 'package:source_code_mobile/screens/payment_screen.dart';
 import 'package:source_code_mobile/screens/profile_screen.dart';
 import 'package:source_code_mobile/screens/register_screen.dart';
 import 'package:source_code_mobile/screens/stock_monitor_screen.dart';
@@ -65,7 +66,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Named Routes',
-      initialRoute: '/watchlist',
+      initialRoute: '/paypal',
       routes: {
         '/': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
@@ -76,8 +77,11 @@ class MyApp extends StatelessWidget {
         '/watchlist': (context) => const WatchlistScreen(),
         '/register': (context) => const RegisterScreen(),
         '/stock': (context) => const StockScreen(),
+        '/paypal': (context) => PayPalPaymentScreen(),
       },
     );
   }
 }
+
+
 
